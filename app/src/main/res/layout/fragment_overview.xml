@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             tools:context=".overview"
+                                             android:id="@+id/overview">
+
+    <TextView
+            android:text="Category Quiz Title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/overview_header" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline" android:layout_marginTop="184dp"
+            app:layout_constraintTop_toTopOf="parent" android:textStyle="bold"/>
+    <TextView
+            android:text="Total number of questions: "
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/overview_numQuestion" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" android:layout_marginTop="28dp"
+            app:layout_constraintTop_toBottomOf="@+id/overview_header" app:layout_constraintHorizontal_bias="0.497"/>
+    <Button
+            android:text="Begin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/begin_quiz_btn" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintHorizontal_bias="0.498" app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="48dp" app:layout_constraintTop_toBottomOf="@+id/overview_description"/>
+    <TextView
+            android:text="This is a description about the quiz"
+            android:layout_width="301dp"
+            android:layout_height="61dp"
+            android:id="@+id/overview_description" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="44dp" app:layout_constraintTop_toBottomOf="@+id/overview_numQuestion"
+    />
+</android.support.constraint.ConstraintLayout>
+
+
