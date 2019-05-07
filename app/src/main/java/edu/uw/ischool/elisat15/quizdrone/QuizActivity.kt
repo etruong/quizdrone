@@ -19,9 +19,8 @@ class QuizActivity : AppCompatActivity(),
     var selectedCategory: String? = null
     val quizApp: QuizApp = QuizApp()
 
-
     override fun nextQuestionListener() {
-        if (quizApp.getSelectedQuiz().questions.size == questionNum + 1) {
+        if (quizApp.getSelectedQuiz(selectedCategory!!).questions.size == questionNum + 1) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         } else {
@@ -34,7 +33,7 @@ class QuizActivity : AppCompatActivity(),
     }
 
     override fun submitAnswer(selected: String?) {
-        var questionAnswer = quizApp.getSelectedQuiz().questions[questionNum]
+        var questionAnswer = quizApp.getSelectedQuiz(selectedCategory!!).questions[questionNum]
         if (selected == questionAnswer.choices[questionAnswer.answer]) {
             answersCorrect += 1
         }
@@ -77,7 +76,6 @@ class QuizActivity : AppCompatActivity(),
         val fragmentTransaction = fragmentManager.beginTransaction()
         selectedCategory = intent.getStringExtra(SELECTED_CATEGORY)
         quizApp.initData()
-        quizApp.updateChosenQuiz(selectedCategory)
 
         val overviewBundle = Bundle()
         overviewBundle.putString("category", selectedCategory)

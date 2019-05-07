@@ -33,16 +33,16 @@ class overview : Fragment() {
 
         val v = inflater.inflate(R.layout.fragment_overview, container, false)
         quizApp.initData()
-        quizApp.updateChosenQuiz(arguments?.getString("category"))
 
-        val category = quizApp.chosenQuiz
-        val quizLength = quizApp.getSelectedQuiz().questions.size
+        val category = arguments?.getString("category")
+        val quizInfo = quizApp.getSelectedQuiz(category!!)
+        val quizLength = quizInfo.questions.size
 
         val categoryQuiz = v.findViewById<TextView>(R.id.overview_header)
-        categoryQuiz.text =  "${quizApp.getSelectedQuiz().title} Quiz"
+        categoryQuiz.text =  "${quizInfo.title} Quiz"
 
         val categoryQuizDescription = v.findViewById<TextView>(R.id.overview_description)
-        categoryQuizDescription.text = quizApp.getSelectedQuiz().description
+        categoryQuizDescription.text = quizInfo.description
 
         val numQuestion = v.findViewById<TextView>(R.id.overview_numQuestion)
         numQuestion.text = numQuestion.text.toString() + quizLength

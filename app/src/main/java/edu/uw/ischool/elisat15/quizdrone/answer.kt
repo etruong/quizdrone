@@ -26,13 +26,13 @@ class answer : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         quizApp.initData()
-        quizApp.updateChosenQuiz(arguments?.getString("category")!!)
-        val questionContent = quizApp.getSelectedQuiz().questions[arguments!!.getInt("questionNum")]
+        val questionContent = quizApp.getSelectedQuiz(arguments?.getString("category")!!).questions[arguments!!.getInt("questionNum")]
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_answer, container, false)
 
         val categoryHeader = v.findViewById<TextView>(R.id.answer_header)
-        categoryHeader.text = "${arguments?.getString("category")} Quiz Question ${arguments?.getInt("questionNum")!!.plus(1)}"
+        categoryHeader.text = "${arguments?.getString("category")} Quiz Question" +
+                " ${arguments?.getInt("questionNum")!!.plus(1)}"
 
         val question = v.findViewById<TextView>(R.id.question)
         question.text = questionContent.question
@@ -44,10 +44,12 @@ class answer : Fragment() {
         yourAnswer.text = "Your answer was: ${arguments?.getString("selectedAnswer")}"
 
         val stats = v.findViewById<TextView>(R.id.stats)
-        stats.text = "You have ${arguments?.getInt("totalAnswersCorrect")} out of ${arguments?.getInt("questionNum")!!.plus(1)}" +
+        stats.text = "You have ${arguments?.getInt("totalAnswersCorrect")} out of " +
+                "${arguments?.getInt("questionNum")!!.plus(1)}" +
                 " questions correct!"
 
-        val lastQuestion = quizApp.getSelectedQuiz().questions.size == (arguments?.getInt("questionNum")!!.plus(1))
+        val lastQuestion = quizApp.getSelectedQuiz(arguments?.getString("category")!!).questions.size ==
+                (arguments?.getInt("questionNum")!!.plus(1))
         val nextQuestionbtn = v.findViewById<Button>(R.id.next_btn)
         if (lastQuestion) {
             nextQuestionbtn.text = "Finish Quiz"

@@ -28,15 +28,14 @@ class question : Fragment() {
     ): View? {
 
         quizApp.initData()
-        quizApp.updateChosenQuiz(arguments?.getString("category")!!)
-        val questionContent = quizApp.getSelectedQuiz().questions[arguments!!.getInt("questionNum")]
+        val questionContent = quizApp.getSelectedQuiz(arguments?.getString("category")!!).questions[arguments!!.getInt("questionNum")]
         val v = inflater.inflate(R.layout.fragment_question, container, false)
 
         val questionContainer = v.findViewById<TextView>(R.id.question_container)
         questionContainer.text = questionContent.question
 
         val header = v.findViewById<TextView>(R.id.question_header)
-        header.text = "${quizApp.chosenQuiz} Quiz Question " +
+        header.text = "${arguments?.getString("category")!!} Quiz Question " +
                 "${arguments?.getInt("questionNum")?.plus(1)}"
 
         val choices = questionContent.choices
