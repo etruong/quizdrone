@@ -2,6 +2,7 @@ package edu.uw.ischool.elisat15.quizdrone
 
 import android.app.Application
 import android.arch.lifecycle.LiveData
+import android.arch.lifecycle.MutableLiveData
 import android.util.Log
 
 const val TAG: String = "QuizApp"
@@ -23,7 +24,7 @@ val mathTopic = QuizApp.Topic(
 
 // Physics Quiz Data
 val physicQuestionObjects = arrayOf<QuizApp.Question>(
-    QuizApp.Question("What is the force of gravity?", arrayOf("10 m/s", "15 m/s", "80 m/s", "9.8 m/s"), 3),
+    QuizApp.Question("What is the force of gravity?", arrayOf("10 m/s^2", "15 m/s^2", "80 m/s^2", "9.8 m/s^2"), 3),
     QuizApp.Question("Sound travels at the fastest speed in...", arrayOf("Steel", "Water", "Air", "Vaccum"), 1),
     QuizApp.Question(
         "What is inertia?",
@@ -86,7 +87,7 @@ interface TopicRepository {
         userResponse = mutableListOf()
     }
 
-    fun updateChosenQuiz(quizName: String)
+    fun updateChosenQuiz(quizName: String?)
     fun updateUserResponse(questionNum: Int, answer: Int)
 
 }
@@ -112,7 +113,7 @@ class QuizApp() : Application(), TopicRepository {
         userResponse!![questionNum] = answer
     }
 
-    override fun updateChosenQuiz(quizName: String) {
+    override fun updateChosenQuiz(quizName: String?) {
         chosenQuiz = quizName
     }
 

@@ -15,6 +15,7 @@ import android.widget.TextView
 class answer : Fragment() {
 
     private var listener: AnswerListener? = null
+    val quizApp: QuizApp = QuizApp()
 
     interface AnswerListener {
         fun nextQuestionListener()
@@ -24,28 +25,31 @@ class answer : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        quizApp.initData()
+        quizApp.updateChosenQuiz(arguments?.getString("category"))
+        val questionContent = quizApp.getSelectedQuiz().questions[arguments!!.getInt("questionNum")]
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_answer, container, false)
 
         val categoryHeader = v.findViewById<TextView>(R.id.answer_header)
-        categoryHeader.text = "${arguments?.getString("category")} Quiz Question ${arguments?.getInt("questionNum")}"
+        categoryHeader.text = "${arguments?.getString("category")} Quiz Question ${arguments?.getInt("questionNum")!!.plus(1)}"
 
         val question = v.findViewById<TextView>(R.id.question)
-        question.text = arguments?.getString("question")
+        question.text = questionContent.question
 
         val correctAnswer = v.findViewById<TextView>(R.id.correct_answer)
-        correctAnswer.text = "The correct answer is: ${arguments?.getString("correctAnswer")}"
+        correctAnswer.text = "The correct answer is: ${questionContent.choices[questionContent.answer]}"
 
         val yourAnswer = v.findViewById<TextView>(R.id.your_answer)
         yourAnswer.text = "Your answer was: ${arguments?.getString("selectedAnswer")}"
 
         val stats = v.findViewById<TextView>(R.id.stats)
-        stats.text = "You have ${arguments?.getInt("totalAnswersCorrect")} out of ${arguments?.getInt("questionNum")}" +
+        stats.text = "You have ${arguments?.getInt("totalAnswersCorrect")} out of ${arguments?.getInt("questionNum")!!.plus(1)}" +
                 " questions correct!"
 
-        val lastQuestion = arguments?.getBoolean("lastQuestion")
+        val lastQuestion = quizApp.getSelectedQuiz().questions.size == (arguments?.getInt("questionNum")!!.plus(1))
         val nextQuestionbtn = v.findViewById<Button>(R.id.next_btn)
-        if (lastQuestion!!) {
+        if (lastQuestion) {
             nextQuestionbtn.text = "Finish Quiz"
         }
 

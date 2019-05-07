@@ -18,6 +18,8 @@ class QuizActivity : AppCompatActivity(),
     var questionNum: Int = 0
     var answersCorrect: Int = 0
 
+    val quizApp: QuizApp = QuizApp()
+
     override fun nextQuestionListener() {
         if (categoryLibrary?.getQuizSize() == questionNum + 1) {
             val intent = Intent(this, MainActivity::class.java)
@@ -32,18 +34,19 @@ class QuizActivity : AppCompatActivity(),
     }
 
     override fun submitAnswer(selected: String?) {
-        if (selected == categoryLibrary?.getAnswer(questionNum)) {
+        var questionAnswer = quizApp.getSelectedQuiz().questions[questionNum]
+        if (selected == questionAnswer.choices[questionAnswer.answer]) {
             answersCorrect += 1
         }
 
         val answerBundle = Bundle()
         answerBundle.putString("category", categoryLibrary?.category)
         answerBundle.putString("selectedAnswer", selected)
-        answerBundle.putString("correctAnswer", categoryLibrary?.getAnswer(questionNum))
-        answerBundle.putInt("questionNum", questionNum + 1)
-        answerBundle.putString("question", categoryLibrary?.getQuestion(questionNum))
+//        answerBundle.putString("correctAnswer", categoryLibrary?.getAnswer(questionNum))
+        answerBundle.putInt("questionNum", questionNum)
+//        answerBundle.putString("question", categoryLibrary?.getQuestion(questionNum))
         answerBundle.putInt("totalAnswersCorrect", answersCorrect)
-        answerBundle.putBoolean("lastQuestion", categoryLibrary?.getQuizSize() == questionNum + 1)
+//        answerBundle.putBoolean("lastQuestion", categoryLibrary?.getQuizSize() == questionNum + 1)
 
         val answerFragment = answer()
         answerFragment.arguments = answerBundle
@@ -69,28 +72,24 @@ class QuizActivity : AppCompatActivity(),
 
     override fun onBeginBtnClick(category: String?) {
         val questionBundle = createQuestionBundle(category)
-
         val questionFragment = question()
         questionFragment.arguments = questionBundle
-
         replaceFragments(questionFragment)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
-        val data = QuizApp()
-        data.initData()
-        Log.d("QuizActivity", data.chosenQuiz)
 
         val selectedCategory = intent.getStringExtra(SELECTED_CATEGORY)
         categoryLibrary = QuizQuestionLibrary(selectedCategory)
 
+        quizApp.initData()
+        quizApp.updateChosenQuiz(selectedCategory)
         val fragmentTransaction = fragmentManager.beginTransaction()
 
         val overviewBundle = Bundle()
         overviewBundle.putString("category", selectedCategory)
-        overviewBundle.putInt("quizLength", categoryLibrary!!.getQuizSize())
 
         val quizOverviewFragment = overview()
         quizOverviewFragment.arguments = overviewBundle

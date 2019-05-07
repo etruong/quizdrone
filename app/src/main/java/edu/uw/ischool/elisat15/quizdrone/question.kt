@@ -20,22 +20,26 @@ class question : Fragment() {
     }
 
     private var questionListener: SubmitAnswerListener? = null
+    val quizApp: QuizApp = QuizApp()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
+        quizApp.initData()
+        quizApp.updateChosenQuiz(arguments?.getString("category"))
+        val questionContent = quizApp.getSelectedQuiz().questions[arguments!!.getInt("questionNum")]
         val v = inflater.inflate(R.layout.fragment_question, container, false)
 
         val questionContainer = v.findViewById<TextView>(R.id.question_container)
-        questionContainer.text = arguments?.getString("question") as CharSequence?
+        questionContainer.text = questionContent.question
 
         val header = v.findViewById<TextView>(R.id.question_header)
-        header.text = "${arguments?.getString("category")} Quiz Question " +
+        header.text = "${quizApp.chosenQuiz} Quiz Question " +
                 "${arguments?.getInt("questionNum")?.plus(1)}"
 
-        val choices = arguments?.getStringArray("choices")
+        val choices = questionContent.choices
 
         val choiceOne = v.findViewById<RadioButton>(R.id.choice1)
         choiceOne.text = choices?.get(0)

@@ -26,8 +26,6 @@ class MainActivity : AppCompatActivity() {
         btn.setOnClickListener() {
 
             val selectedCategory = btn.text.toString()
-            quizApp.updateChosenQuiz(selectedCategory)
-            Log.d("MainActivity", quizApp.chosenQuiz)
             val intent = Intent(this, QuizActivity::class.java)
             intent.putExtra(SELECTED_CATEGORY, selectedCategory)
             startActivity(intent)

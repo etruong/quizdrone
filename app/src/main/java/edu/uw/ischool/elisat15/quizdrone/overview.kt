@@ -26,17 +26,14 @@ class overview : Fragment() {
         fun onBeginBtnClick(category: String?)
     }
 
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        quizApp.initData()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
 
         val v = inflater.inflate(R.layout.fragment_overview, container, false)
+        quizApp.initData()
+        quizApp.updateChosenQuiz(arguments?.getString("category"))
         val category = quizApp.chosenQuiz
         val quizLength = quizApp.getSelectedQuiz().questions.size
 
@@ -59,14 +56,14 @@ class overview : Fragment() {
         return v
     }
 
-    private fun setDescription(category: String?, description: TextView) {
-        var descriptionText = quizApp.mathQuiz!!.description
-        when (category?.toLowerCase()) {
-            "physics" -> descriptionText = quizApp.physicsQuiz!!.description
-            "marvel super heroes" -> descriptionText = quizApp.marvelQuiz!!.description
-        }
-        description.text = descriptionText
-    }
+//    private fun setDescription(category: String?, description: TextView) {
+//        var descriptionText = quizApp.mathQuiz!!.description
+//        when (category?.toLowerCase()) {
+//            "physics" -> descriptionText = quizApp.physicsQuiz!!.description
+//            "marvel super heroes" -> descriptionText = quizApp.marvelQuiz!!.description
+//        }
+//        description.text = descriptionText
+//    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
