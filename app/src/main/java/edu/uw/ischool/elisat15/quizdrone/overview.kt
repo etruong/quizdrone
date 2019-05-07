@@ -34,6 +34,7 @@ class overview : Fragment() {
         val v = inflater.inflate(R.layout.fragment_overview, container, false)
         quizApp.initData()
         quizApp.updateChosenQuiz(arguments?.getString("category"))
+
         val category = quizApp.chosenQuiz
         val quizLength = quizApp.getSelectedQuiz().questions.size
 
@@ -42,7 +43,6 @@ class overview : Fragment() {
 
         val categoryQuizDescription = v.findViewById<TextView>(R.id.overview_description)
         categoryQuizDescription.text = quizApp.getSelectedQuiz().description
-//        setDescription(category, categoryQuizDescription)
 
         val numQuestion = v.findViewById<TextView>(R.id.overview_numQuestion)
         numQuestion.text = numQuestion.text.toString() + quizLength
@@ -55,15 +55,6 @@ class overview : Fragment() {
         // Inflate the layout for this fragment
         return v
     }
-
-//    private fun setDescription(category: String?, description: TextView) {
-//        var descriptionText = quizApp.mathQuiz!!.description
-//        when (category?.toLowerCase()) {
-//            "physics" -> descriptionText = quizApp.physicsQuiz!!.description
-//            "marvel super heroes" -> descriptionText = quizApp.marvelQuiz!!.description
-//        }
-//        description.text = descriptionText
-//    }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)

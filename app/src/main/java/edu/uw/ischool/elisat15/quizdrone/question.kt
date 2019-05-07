@@ -28,7 +28,7 @@ class question : Fragment() {
     ): View? {
 
         quizApp.initData()
-        quizApp.updateChosenQuiz(arguments?.getString("category"))
+        quizApp.updateChosenQuiz(arguments?.getString("category")!!)
         val questionContent = quizApp.getSelectedQuiz().questions[arguments!!.getInt("questionNum")]
         val v = inflater.inflate(R.layout.fragment_question, container, false)
 
@@ -42,13 +42,13 @@ class question : Fragment() {
         val choices = questionContent.choices
 
         val choiceOne = v.findViewById<RadioButton>(R.id.choice1)
-        choiceOne.text = choices?.get(0)
+        choiceOne.text = choices.get(0)
         val choiceTwo = v.findViewById<RadioButton>(R.id.choice2)
-        choiceTwo.text = choices?.get(1)
+        choiceTwo.text = choices.get(1)
         val choiceThree = v.findViewById<RadioButton>(R.id.choice3)
-        choiceThree.text = choices?.get(2)
+        choiceThree.text = choices.get(2)
         val choiceFour = v.findViewById<RadioButton>(R.id.choice4)
-        choiceFour.text = choices?.get(3)
+        choiceFour.text = choices.get(3)
 
         val choicesContainer = v.findViewById<RadioGroup>(R.id.choices)
 

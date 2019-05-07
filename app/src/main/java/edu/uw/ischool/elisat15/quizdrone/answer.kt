@@ -26,7 +26,7 @@ class answer : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         quizApp.initData()
-        quizApp.updateChosenQuiz(arguments?.getString("category"))
+        quizApp.updateChosenQuiz(arguments?.getString("category")!!)
         val questionContent = quizApp.getSelectedQuiz().questions[arguments!!.getInt("questionNum")]
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_answer, container, false)

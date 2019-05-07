@@ -13,20 +13,20 @@ import android.widget.TextView
 class QuizActivity : AppCompatActivity(),
     overview.OnBeginQuizClickListener, question.SubmitAnswerListener, answer.AnswerListener {
 
-    var categoryLibrary: QuizQuestionLibrary? = null
     var fragmentManager: FragmentManager = supportFragmentManager
     var questionNum: Int = 0
     var answersCorrect: Int = 0
-
+    var selectedCategory: String? = null
     val quizApp: QuizApp = QuizApp()
 
+
     override fun nextQuestionListener() {
-        if (categoryLibrary?.getQuizSize() == questionNum + 1) {
+        if (quizApp.getSelectedQuiz().questions.size == questionNum + 1) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         } else {
             questionNum += 1
-            val questionBundle = createQuestionBundle(categoryLibrary?.category)
+            val questionBundle = createQuestionBundle(selectedCategory)
             val questionFragment = question()
             questionFragment.arguments = questionBundle
             replaceFragments(questionFragment)
@@ -40,13 +40,10 @@ class QuizActivity : AppCompatActivity(),
         }
 
         val answerBundle = Bundle()
-        answerBundle.putString("category", categoryLibrary?.category)
+        answerBundle.putString("category", selectedCategory)
         answerBundle.putString("selectedAnswer", selected)
-//        answerBundle.putString("correctAnswer", categoryLibrary?.getAnswer(questionNum))
         answerBundle.putInt("questionNum", questionNum)
-//        answerBundle.putString("question", categoryLibrary?.getQuestion(questionNum))
         answerBundle.putInt("totalAnswersCorrect", answersCorrect)
-//        answerBundle.putBoolean("lastQuestion", categoryLibrary?.getQuizSize() == questionNum + 1)
 
         val answerFragment = answer()
         answerFragment.arguments = answerBundle
@@ -56,9 +53,6 @@ class QuizActivity : AppCompatActivity(),
     private fun createQuestionBundle(category: String?): Bundle {
         val questionBundle = Bundle()
         questionBundle.putString("category", category)
-        questionBundle.putString("question", categoryLibrary?.getQuestion(questionNum))
-        questionBundle.putStringArray("choices", categoryLibrary?.getChoices(questionNum))
-        questionBundle.putString("answer", categoryLibrary?.getAnswer(questionNum))
         questionBundle.putInt("questionNum", questionNum)
         return questionBundle
     }
@@ -80,129 +74,16 @@ class QuizActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
-
-        val selectedCategory = intent.getStringExtra(SELECTED_CATEGORY)
-        categoryLibrary = QuizQuestionLibrary(selectedCategory)
-
+        val fragmentTransaction = fragmentManager.beginTransaction()
+        selectedCategory = intent.getStringExtra(SELECTED_CATEGORY)
         quizApp.initData()
         quizApp.updateChosenQuiz(selectedCategory)
-        val fragmentTransaction = fragmentManager.beginTransaction()
 
         val overviewBundle = Bundle()
         overviewBundle.putString("category", selectedCategory)
-
         val quizOverviewFragment = overview()
         quizOverviewFragment.arguments = overviewBundle
         fragmentTransaction.add(R.id.quiz_container, quizOverviewFragment)
         fragmentTransaction.commit()
-    }
-
-
-}
-
-class QuizQuestionLibrary constructor(val category: String) {
-    // Math Questions below
-    private val mathQuestions: Array<String> = arrayOf(
-        "What is 5 + 5?",
-        "What is 3 * 10?",
-        "What is 10 + 1 * 9?",
-        "What is -20 * -1 * 30?",
-        "What is 5 + (20 * -1) * 8?"
-    )
-    private val mathOptions: Array<Array<String>> = arrayOf(
-        arrayOf("10", "20", "13", "5"),
-        arrayOf("0", "10", "3", "30"),
-        arrayOf("10", "99", "19", "20"),
-        arrayOf("50", "333", "500", "600"),
-        arrayOf("111", "555", "155", "0")
-    )
-    private val mathAnswers: Array<String> = arrayOf("10", "30", "19", "600", "155")
-
-    // Physics Questions below
-    private val physicsQuestions: Array<String> = arrayOf(
-        "What is the force of gravity?",
-        "Sound travels at the fastest speed in...",
-        "What is inertia?",
-        "What is torque?"
-    )
-    private val physicsOptions: Array<Array<String>> = arrayOf(
-        arrayOf("10 m/s", "15 m/s", "80 m/s", "9.8 m/s"),
-        arrayOf("Steel", "Water", "Air", "Vaccum"),
-        arrayOf(
-            "Something that has to do with how wind moves",
-            "Not sure",
-            "The tendency for an object to remain in a uniform state",
-            "In ert ia..."
-        ),
-        arrayOf(
-            "The twisting force that leads to rotation",
-            "Does it have something to do with twerking?",
-            "Maybe about a turtle",
-            "Not sure"
-        )
-    )
-    private val physicsAnswers: Array<String> = arrayOf(
-        "9.8 m/s",
-        "Steel",
-        "The tendency for an object to remain in a uniform state",
-        "The twisting force that leads to rotation"
-    )
-
-    // Marvel Questions below
-    private val marvelQuestions: Array<String> = arrayOf(
-        "Which of these Marvel characters carry a hammer?",
-        "Which of these Marvel characters can shoot webs out of his hands?",
-        "Is Thanos the good guy?",
-        "Which of the following characters below is not a Marvel character?"
-    )
-    private val marvelOptions: Array<Array<String>> = arrayOf(
-        arrayOf("Thor", "Loki", "Bob the Builder", "Spiderman"),
-        arrayOf("Doctor Strange", "Iron man", "Bruce Wayne", "Spiderman"),
-        arrayOf("NO!", "I guess", "Yes", "Obviously"),
-        arrayOf("Black Widow", "Captain America", "Jake", "Buckey"
-        )
-    )
-    private val marvelAnswers: Array<String> = arrayOf(
-        "Thor",
-        "Spiderman",
-        "NO!",
-        "The twisting force that leads to rotation",
-        "Jake"
-    )
-
-    fun getQuestion(questionNum: Int): String {
-        var questionSet = mathQuestions
-        when (category.toLowerCase()) {
-            "physics" -> questionSet = physicsQuestions
-            "marvel super heroes" -> questionSet = marvelQuestions
-        }
-        return questionSet[questionNum]
-    }
-
-    fun getQuizSize(): Int {
-        var size = mathQuestions.size
-        when (category.toLowerCase()) {
-            "physics" -> size = physicsQuestions.size
-            "marvel super heroes" -> size = marvelQuestions.size
-        }
-        return size
-    }
-
-    fun getAnswer(questionNum: Int): String {
-        var questionAnswer = mathAnswers[questionNum]
-        when (category.toLowerCase()) {
-            "physics" -> questionAnswer = physicsAnswers[questionNum]
-            "marvel super heroes" -> questionAnswer = marvelAnswers[questionNum]
-        }
-        return questionAnswer
-    }
-
-    fun getChoices(questionNum: Int): Array<String> {
-        var questionChoices = mathOptions[questionNum]
-        when (category.toLowerCase()) {
-            "physics" -> questionChoices = physicsOptions[questionNum]
-            "marvel super heroes" -> questionChoices = marvelOptions[questionNum]
-        }
-        return questionChoices
     }
 }

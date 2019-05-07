@@ -10,8 +10,6 @@ const val SELECTED_CATEGORY: String = "currentCategory"
 
 class MainActivity : AppCompatActivity() {
 
-    val quizApp: QuizApp = QuizApp()
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
