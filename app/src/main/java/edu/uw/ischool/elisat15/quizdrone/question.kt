@@ -26,9 +26,8 @@ class question : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        quizApp.initData()
-        val questionContent = quizApp.getSelectedQuiz(arguments?.getString("category")!!).questions[arguments!!.getInt("questionNum")]
+        quizApp.topicRepository.fetchData(this.activity!!)
+        val questionContent = quizApp.accessRepository(arguments?.getString("category")!!).questions[arguments!!.getInt("questionNum")]
         val v = inflater.inflate(R.layout.fragment_question, container, false)
 
         val questionContainer = v.findViewById<TextView>(R.id.question_container)

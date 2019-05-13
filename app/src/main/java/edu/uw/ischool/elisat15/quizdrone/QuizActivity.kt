@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.util.Log
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
 
@@ -18,9 +21,10 @@ class QuizActivity : AppCompatActivity(),
     var answersCorrect: Int = 0
     var selectedCategory: String? = null
     val quizApp: QuizApp = QuizApp()
+    lateinit var quizInformation: Topic
 
     override fun nextQuestionListener() {
-        if (quizApp.getSelectedQuiz(selectedCategory!!).questions.size == questionNum + 1) {
+        if (quizApp.accessRepository(selectedCategory!!).questions.size == questionNum + 1) {
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         } else {
@@ -33,13 +37,14 @@ class QuizActivity : AppCompatActivity(),
     }
 
     override fun submitAnswer(selected: String?) {
-        var questionAnswer = quizApp.getSelectedQuiz(selectedCategory!!).questions[questionNum]
+
+        var questionAnswer = quizApp.accessRepository(selectedCategory!!).questions[questionNum]
         if (selected == questionAnswer.choices[questionAnswer.answer]) {
             answersCorrect += 1
         }
-
+        Log.d("hello", quizInformation.title)
         val answerBundle = Bundle()
-        answerBundle.putString("category", selectedCategory)
+        answerBundle.putString("category", quizInformation.title)
         answerBundle.putString("selectedAnswer", selected)
         answerBundle.putInt("questionNum", questionNum)
         answerBundle.putInt("totalAnswersCorrect", answersCorrect)
@@ -73,9 +78,11 @@ class QuizActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
+        setSupportActionBar(findViewById(R.id.my_toolbar))
         val fragmentTransaction = fragmentManager.beginTransaction()
         selectedCategory = intent.getStringExtra(SELECTED_CATEGORY)
-        quizApp.initData()
+        quizApp.topicRepository.fetchData(this)
+        quizInformation = quizApp.accessRepository(selectedCategory!!)
 
         val overviewBundle = Bundle()
         overviewBundle.putString("category", selectedCategory)
@@ -83,5 +90,30 @@ class QuizActivity : AppCompatActivity(),
         quizOverviewFragment.arguments = overviewBundle
         fragmentTransaction.add(R.id.quiz_container, quizOverviewFragment)
         fragmentTransaction.commit()
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.action_preferences -> {
+            // User chose the "Settings" item, show the app settings UI...
+            val intent = Intent(this, Preferences::class.java)
+            startActivity(intent)
+            true
+        }
+        R.id.action_home -> {
+            val intent = Intent(this, MainActivity::class.java)
+            startActivity(intent)
+            true
+        }
+        else -> {
+            // If we got here, the user's action was not recognized.
+            // Invoke the superclass to handle it.
+            super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.menu, menu)
+        return true
     }
 }

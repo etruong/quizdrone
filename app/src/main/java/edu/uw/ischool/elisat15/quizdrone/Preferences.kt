@@ -9,39 +9,37 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Button
-import java.io.IOException
+import android.widget.EditText
+import android.widget.TextView
 
-const val SELECTED_CATEGORY: String = "currentCategory"
+class Preferences : AppCompatActivity() {
 
-class MainActivity : AppCompatActivity() {
+    companion object {
+        const val USER_PREF_KEY = "USER_PREFERENCES_KEY"
+        private const val DATA_SOURCE_KEY: String = "dataSource"
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_preferences)
         setSupportActionBar(findViewById(R.id.my_toolbar))
-
-        val quizApp = QuizApp()
-
-        val topics = quizApp.topicRepository.fetchData(this)
-        Log.d("hi size", "${topics.size}")
-        findViewById<Button>(R.id.topic1Btn).text = topics[0].title
-        findViewById<Button>(R.id.topic2Btn).text = topics[1].title
-        findViewById<Button>(R.id.topic3Btn).text = topics[2].title
-
-        // Sets on click listeners for
-        setListener(findViewById(R.id.topic1Btn))
-        setListener(findViewById(R.id.topic2Btn))
-        setListener(findViewById(R.id.topic3Btn))
+        setSavePreferenceButton()
     }
 
-    private fun setListener(btn: Button) {
-        btn.setOnClickListener() {
+    private fun setSavePreferenceButton() {
+        val saveBtn = findViewById<Button>(R.id.saveSettingBtn)
+        saveBtn.setOnClickListener {
+            var dataURL = findViewById<EditText>(R.id.dataSourceInput).text.toString()
+            var grabDataTime = findViewById<EditText>(R.id.updateDataTime).text.toString()
 
-            val selectedCategory = btn.text.toString()
-            val intent = Intent(this, QuizActivity::class.java)
-            intent.putExtra(SELECTED_CATEGORY, selectedCategory)
+            Log.d("savePref", dataURL)
+            Log.d("savePref", grabDataTime)
+
+            val sharedPreferences = getSharedPreferences(Companion.USER_PREF_KEY, Context.MODE_PRIVATE)
+            val updated = sharedPreferences.edit().putString(DATA_SOURCE_KEY, dataURL).commit()
+
+            val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-
         }
     }
 

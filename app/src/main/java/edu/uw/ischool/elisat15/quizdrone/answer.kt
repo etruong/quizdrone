@@ -25,8 +25,8 @@ class answer : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        quizApp.initData()
-        val questionContent = quizApp.getSelectedQuiz(arguments?.getString("category")!!).questions[arguments!!.getInt("questionNum")]
+        quizApp.topicRepository.fetchData(this.activity!!)
+        val questionContent = quizApp.accessRepository(arguments?.getString("category")!!).questions[arguments!!.getInt("questionNum")]
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_answer, container, false)
 
@@ -48,7 +48,7 @@ class answer : Fragment() {
                 "${arguments?.getInt("questionNum")!!.plus(1)}" +
                 " questions correct!"
 
-        val lastQuestion = quizApp.getSelectedQuiz(arguments?.getString("category")!!).questions.size ==
+        val lastQuestion = quizApp.accessRepository(arguments?.getString("category")!!).questions.size ==
                 (arguments?.getInt("questionNum")!!.plus(1))
         val nextQuestionbtn = v.findViewById<Button>(R.id.next_btn)
         if (lastQuestion) {
