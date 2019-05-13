@@ -34,7 +34,7 @@ class overview : Fragment() {
         val v = inflater.inflate(R.layout.fragment_overview, container, false)
 
         val category = arguments?.getString("category")
-        Log.d("debug", category)
+
         quizApp.topicRepository.fetchData(this.activity!!)
         val quizInfo = quizApp.accessRepository(category!!)
         val quizLength = quizInfo.questions.size

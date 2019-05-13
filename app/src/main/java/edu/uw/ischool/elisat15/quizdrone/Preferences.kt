@@ -10,13 +10,14 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 
 class Preferences : AppCompatActivity() {
 
     companion object {
         const val USER_PREF_KEY = "USER_PREFERENCES_KEY"
         private const val DATA_SOURCE_KEY: String = "dataSource"
+        private const val FETCH_TIME_KEY: String = "fetchTime"
+        private const val FETCH_BOOLEAN: String = "fetching"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -29,15 +30,17 @@ class Preferences : AppCompatActivity() {
     private fun setSavePreferenceButton() {
         val saveBtn = findViewById<Button>(R.id.saveSettingBtn)
         saveBtn.setOnClickListener {
-            var dataURL = findViewById<EditText>(R.id.dataSourceInput).text.toString()
+            val dataURL = findViewById<EditText>(R.id.dataSourceInput).text.toString()
             var grabDataTime = findViewById<EditText>(R.id.updateDataTime).text.toString()
 
+            if (grabDataTime == "")
+                grabDataTime = "1"
             Log.d("savePref", dataURL)
             Log.d("savePref", grabDataTime)
-
             val sharedPreferences = getSharedPreferences(Companion.USER_PREF_KEY, Context.MODE_PRIVATE)
-            val updated = sharedPreferences.edit().putString(DATA_SOURCE_KEY, dataURL).commit()
-
+            sharedPreferences.edit().putString(DATA_SOURCE_KEY, dataURL).commit()
+            sharedPreferences.edit().putInt(FETCH_TIME_KEY, grabDataTime.toInt()).commit()
+            sharedPreferences.edit().putBoolean(FETCH_BOOLEAN, true).commit()
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }

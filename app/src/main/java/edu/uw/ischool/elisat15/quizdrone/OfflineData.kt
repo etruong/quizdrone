@@ -78,7 +78,7 @@ class OfflineData() : TopicRepository {
     override fun fetchData(context: Context): ArrayList<Topic> {
         val sharedPreferences = context.getSharedPreferences(USER_PREF_KEY, Context.MODE_PRIVATE)
         dataSource = sharedPreferences.getString(DATA_SOURCE_KEY, "local")!!
-        Log.d("offlineData", dataSource)
+
         if (dataSource == "local" || dataSource == "") {
             topics = arrayListOf<Topic>(mathTopic, physicTopic, marvelTopic)
         } else {
@@ -120,7 +120,6 @@ class OfflineData() : TopicRepository {
                     }
                     val questionsArray = arrayOf<Quiz>()
                     questionsList.toArray<Quiz>(questionsArray)
-                    Log.d("questionArray", title + " " + questionsArray.size + " list size = " + questionsList.size)
                     topicList.add(Topic(title, description, questionsList))
                 }
 
@@ -128,7 +127,7 @@ class OfflineData() : TopicRepository {
             }
 
         }
-        Log.d("json", topics[0].title)
+        Log.d("fetchData", "Data was just fetched")
         return topics
     }
 

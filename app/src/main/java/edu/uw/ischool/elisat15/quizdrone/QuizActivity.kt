@@ -1,5 +1,6 @@
 package edu.uw.ischool.elisat15.quizdrone
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -12,6 +13,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.TextView
+import java.sql.Time
+import java.util.*
+import kotlin.concurrent.schedule
+import kotlin.concurrent.scheduleAtFixedRate
 
 class QuizActivity : AppCompatActivity(),
     overview.OnBeginQuizClickListener, question.SubmitAnswerListener, answer.AnswerListener {

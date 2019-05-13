@@ -10,10 +10,34 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Button
 import java.io.IOException
+import java.util.*
+import kotlin.concurrent.scheduleAtFixedRate
 
 const val SELECTED_CATEGORY: String = "currentCategory"
 
 class MainActivity : AppCompatActivity() {
+
+    companion object {
+        const val USER_PREF_KEY = "USER_PREFERENCES_KEY"
+        private const val FETCH_TIME_KEY: String = "fetchTime"
+        private const val FETCH_BOOLEAN: String = "fetching"
+    }
+
+    private fun fetchData() {
+        val timer = Timer()
+        val context = this
+        val quizApp = QuizApp()
+        val sharedPreferences = context.getSharedPreferences(USER_PREF_KEY, Context.MODE_PRIVATE)
+        val fetchTime = sharedPreferences.getInt(FETCH_TIME_KEY, 1).times(60000).toLong()
+        timer.scheduleAtFixedRate(0, fetchTime) {
+            val fetching = sharedPreferences.getBoolean(FETCH_BOOLEAN, false)
+            if (fetching) {
+                sharedPreferences.edit().putBoolean(FETCH_BOOLEAN, false).commit()
+            } else {
+                quizApp.topicRepository.fetchData(context)
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,7 +45,7 @@ class MainActivity : AppCompatActivity() {
         setSupportActionBar(findViewById(R.id.my_toolbar))
 
         val quizApp = QuizApp()
-
+        fetchData()
         val topics = quizApp.topicRepository.fetchData(this)
         Log.d("hi size", "${topics.size}")
         findViewById<Button>(R.id.topic1Btn).text = topics[0].title
