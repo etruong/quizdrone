@@ -25,6 +25,19 @@ class Preferences : AppCompatActivity() {
         setContentView(R.layout.activity_preferences)
         setSupportActionBar(findViewById(R.id.my_toolbar))
         setSavePreferenceButton()
+
+        val sharedPreferences = getSharedPreferences(Companion.USER_PREF_KEY, Context.MODE_PRIVATE)
+        val dataCurrentSource = sharedPreferences.getString(DATA_SOURCE_KEY, "")
+        val currentDataTime = sharedPreferences.getInt(FETCH_TIME_KEY, 5)
+
+        val dataURL = findViewById<EditText>(R.id.dataSourceInput)
+        var grabDataTime = findViewById<EditText>(R.id.updateDataTime)
+
+        dataURL.setText(dataCurrentSource)
+        grabDataTime.setText("" + currentDataTime)
+
+
+
     }
 
     private fun setSavePreferenceButton() {
@@ -35,8 +48,7 @@ class Preferences : AppCompatActivity() {
 
             if (grabDataTime == "")
                 grabDataTime = "1"
-            Log.d("savePref", dataURL)
-            Log.d("savePref", grabDataTime)
+
             val sharedPreferences = getSharedPreferences(Companion.USER_PREF_KEY, Context.MODE_PRIVATE)
             sharedPreferences.edit().putString(DATA_SOURCE_KEY, dataURL).commit()
             sharedPreferences.edit().putInt(FETCH_TIME_KEY, grabDataTime.toInt()).commit()

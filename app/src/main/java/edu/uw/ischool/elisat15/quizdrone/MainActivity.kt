@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity() {
         val context = this
         val quizApp = QuizApp()
         val sharedPreferences = context.getSharedPreferences(USER_PREF_KEY, Context.MODE_PRIVATE)
-        val fetchTime = sharedPreferences.getInt(FETCH_TIME_KEY, 1).times(60000).toLong()
+        val fetchTime = sharedPreferences.getInt(FETCH_TIME_KEY, 5).times(60000).toLong()
         timer.scheduleAtFixedRate(0, fetchTime) {
             val fetching = sharedPreferences.getBoolean(FETCH_BOOLEAN, false)
             if (fetching) {
