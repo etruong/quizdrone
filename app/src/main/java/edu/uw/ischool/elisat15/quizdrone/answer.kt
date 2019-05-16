@@ -15,7 +15,7 @@ import android.widget.TextView
 class answer : Fragment() {
 
     private var listener: AnswerListener? = null
-    val quizApp: QuizApp = QuizApp()
+    val quizApp: QuizApp = QuizApp.instance
 
     interface AnswerListener {
         fun nextQuestionListener()
@@ -25,7 +25,7 @@ class answer : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        quizApp.topicRepository.fetchData(this.activity!!)
+
         val questionContent = quizApp.accessRepository(arguments?.getString("category")!!).questions[arguments!!.getInt("questionNum")]
         // Inflate the layout for this fragment
         val v = inflater.inflate(R.layout.fragment_answer, container, false)

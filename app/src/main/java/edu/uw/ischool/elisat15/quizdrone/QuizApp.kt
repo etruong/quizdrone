@@ -25,14 +25,6 @@ class QuizApp() : Application() {
         instance = this
     }
 
-//    fun accessRepository(selectedQuiz: String): Topic {
-//        if (context is android.support.v4.app.Fragment) {
-//            context = this.activity as Activity
-//        }
-//        topicRepository.fetchData(this)
-//        return topicRepository.getSelectedQuiz(selectedQuiz)
-//    }
-
     fun accessRepository(selectedQuiz: String): Topic {
 //        topicRepository.fetchData(context)
         return topicRepository.getSelectedQuiz(selectedQuiz)

@@ -1,5 +1,7 @@
 package edu.uw.ischool.elisat15.quizdrone
 
+import android.app.AlarmManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -23,31 +25,25 @@ class MainActivity : AppCompatActivity() {
         private const val FETCH_BOOLEAN: String = "fetching"
     }
 
-    private fun fetchData() {
-        val timer = Timer()
-        val context = this
-        val quizApp = QuizApp()
-        val sharedPreferences = context.getSharedPreferences(USER_PREF_KEY, Context.MODE_PRIVATE)
-        val fetchTime = sharedPreferences.getInt(FETCH_TIME_KEY, 5).times(60000).toLong()
-        timer.scheduleAtFixedRate(0, fetchTime) {
-            val fetching = sharedPreferences.getBoolean(FETCH_BOOLEAN, false)
-            if (fetching) {
-                sharedPreferences.edit().putBoolean(FETCH_BOOLEAN, false).commit()
-            } else {
-                quizApp.topicRepository.fetchData(context)
-            }
-        }
-    }
+    val quizApp = QuizApp.instance
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.my_toolbar))
 
-        val quizApp = QuizApp()
-        fetchData()
-        val topics = quizApp.topicRepository.fetchData(this)
-        Log.d("hi size", "${topics.size}")
+        quizApp.topicRepository.fetchData(this)
+
+        val grabDataTime = getSharedPreferences(Preferences.USER_PREF_KEY,
+            Context.MODE_PRIVATE).getInt(FETCH_TIME_KEY, 60000)
+        Log.v("Main", "$grabDataTime")
+        val alarmIntent = Intent(this, MyAlarmManager::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0,
+            grabDataTime.toLong(), pendingIntent)
+
+        val topics = quizApp.topicRepository.topics
         findViewById<Button>(R.id.topic1Btn).text = topics[0].title
         findViewById<Button>(R.id.topic2Btn).text = topics[1].title
         findViewById<Button>(R.id.topic3Btn).text = topics[2].title
@@ -59,14 +55,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setListener(btn: Button) {
-        btn.setOnClickListener() {
 
+        btn.setOnClickListener() {
             val selectedCategory = btn.text.toString()
             val intent = Intent(this, QuizActivity::class.java)
             intent.putExtra(SELECTED_CATEGORY, selectedCategory)
             startActivity(intent)
-
         }
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {

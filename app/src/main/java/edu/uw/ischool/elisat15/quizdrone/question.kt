@@ -20,13 +20,12 @@ class question : Fragment() {
     }
 
     private var questionListener: SubmitAnswerListener? = null
-    val quizApp: QuizApp = QuizApp()
+    val quizApp: QuizApp = QuizApp.instance
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        quizApp.topicRepository.fetchData(this.activity!!)
         val questionContent = quizApp.accessRepository(arguments?.getString("category")!!).questions[arguments!!.getInt("questionNum")]
         val v = inflater.inflate(R.layout.fragment_question, container, false)
 

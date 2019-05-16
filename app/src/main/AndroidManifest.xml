@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="edu.uw.ischool.elisat15.quizdrone">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
             android:name=".QuizApp"
             android:allowBackup="true"
@@ -10,6 +12,7 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
         <activity android:name=".Preferences">
         </activity>
         <activity android:name=".QuizActivity">
@@ -21,6 +24,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <receiver android:name=".MyAlarmManager"></receiver>
     </application>
 
 </manifest>

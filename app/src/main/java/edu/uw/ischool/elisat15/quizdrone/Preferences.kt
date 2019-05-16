@@ -1,5 +1,6 @@
 package edu.uw.ischool.elisat15.quizdrone
 
+import android.app.AlarmManager
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -10,6 +11,9 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
+import android.app.PendingIntent
+
+
 
 class Preferences : AppCompatActivity() {
 
@@ -31,28 +35,39 @@ class Preferences : AppCompatActivity() {
         val currentDataTime = sharedPreferences.getInt(FETCH_TIME_KEY, 5)
 
         val dataURL = findViewById<EditText>(R.id.dataSourceInput)
-        var grabDataTime = findViewById<EditText>(R.id.updateDataTime)
+        val grabDataTime = findViewById<EditText>(R.id.updateDataTime)
 
         dataURL.setText(dataCurrentSource)
-        grabDataTime.setText("" + currentDataTime)
-
-
+        grabDataTime.setText("$currentDataTime")
 
     }
 
     private fun setSavePreferenceButton() {
         val saveBtn = findViewById<Button>(R.id.saveSettingBtn)
+        val sharedPreferences = getSharedPreferences(Companion.USER_PREF_KEY, Context.MODE_PRIVATE)
+        val dataEditText = findViewById<EditText>(R.id.dataSourceInput)
+        val dataTimeEditText = findViewById<EditText>(R.id.updateDataTime)
+
+        val alarmIntent = Intent(this, MyAlarmManager::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
+        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
         saveBtn.setOnClickListener {
-            val dataURL = findViewById<EditText>(R.id.dataSourceInput).text.toString()
-            var grabDataTime = findViewById<EditText>(R.id.updateDataTime).text.toString()
+            val dataURL = dataEditText.text.toString()
+            var grabDataTime = dataTimeEditText.text.toString()
 
-            if (grabDataTime == "")
+            if (grabDataTime == "") {
                 grabDataTime = "1"
+            }
 
-            val sharedPreferences = getSharedPreferences(Companion.USER_PREF_KEY, Context.MODE_PRIVATE)
-            sharedPreferences.edit().putString(DATA_SOURCE_KEY, dataURL).commit()
-            sharedPreferences.edit().putInt(FETCH_TIME_KEY, grabDataTime.toInt()).commit()
-            sharedPreferences.edit().putBoolean(FETCH_BOOLEAN, true).commit()
+            alarmManager.cancel(pendingIntent)
+            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0,
+                grabDataTime.toLong().times(1000), pendingIntent)
+
+            sharedPreferences.edit().putString(DATA_SOURCE_KEY, dataURL).apply()
+            sharedPreferences.edit().putInt(FETCH_TIME_KEY, grabDataTime.toInt().times(60000)).apply()
+            sharedPreferences.edit().putBoolean(FETCH_BOOLEAN, true).apply()
+
             val intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
         }

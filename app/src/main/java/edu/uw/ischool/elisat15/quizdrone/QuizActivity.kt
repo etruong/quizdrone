@@ -25,7 +25,7 @@ class QuizActivity : AppCompatActivity(),
     var questionNum: Int = 0
     var answersCorrect: Int = 0
     var selectedCategory: String? = null
-    val quizApp: QuizApp = QuizApp()
+    val quizApp: QuizApp = QuizApp.instance
     lateinit var quizInformation: Topic
 
     override fun nextQuestionListener() {
@@ -86,7 +86,6 @@ class QuizActivity : AppCompatActivity(),
         setSupportActionBar(findViewById(R.id.my_toolbar))
         val fragmentTransaction = fragmentManager.beginTransaction()
         selectedCategory = intent.getStringExtra(SELECTED_CATEGORY)
-        quizApp.topicRepository.fetchData(this)
         quizInformation = quizApp.accessRepository(selectedCategory!!)
 
         val overviewBundle = Bundle()

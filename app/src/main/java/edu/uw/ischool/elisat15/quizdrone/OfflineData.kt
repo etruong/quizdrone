@@ -78,7 +78,7 @@ class OfflineData() : TopicRepository {
     override fun fetchData(context: Context): ArrayList<Topic> {
         val sharedPreferences = context.getSharedPreferences(USER_PREF_KEY, Context.MODE_PRIVATE)
         dataSource = sharedPreferences.getString(DATA_SOURCE_KEY, "local")!!
-
+        Log.v("fetchData", dataSource)
         if (dataSource == "local" || dataSource == "") {
             topics = arrayListOf<Topic>(mathTopic, physicTopic, marvelTopic)
         } else {

@@ -19,7 +19,7 @@ import org.w3c.dom.Text
  */
 class overview : Fragment() {
 
-    val quizApp: QuizApp = QuizApp()
+    val quizApp: QuizApp = QuizApp.instance
     private var overviewListener: OnBeginQuizClickListener? = null
 
     interface OnBeginQuizClickListener {
@@ -35,7 +35,6 @@ class overview : Fragment() {
 
         val category = arguments?.getString("category")
 
-        quizApp.topicRepository.fetchData(this.activity!!)
         val quizInfo = quizApp.accessRepository(category!!)
         val quizLength = quizInfo.questions.size
 
