@@ -12,9 +12,11 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.app.PendingIntent
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
 
 
-
+@Suppress("DEPRECATION")
 class Preferences : AppCompatActivity() {
 
     companion object {
@@ -32,7 +34,7 @@ class Preferences : AppCompatActivity() {
 
         val sharedPreferences = getSharedPreferences(Companion.USER_PREF_KEY, Context.MODE_PRIVATE)
         val dataCurrentSource = sharedPreferences.getString(DATA_SOURCE_KEY, "")
-        val currentDataTime = sharedPreferences.getInt(FETCH_TIME_KEY, 5)
+        val currentDataTime = sharedPreferences.getInt(FETCH_TIME_KEY, 60000).div(60000)
 
         val dataURL = findViewById<EditText>(R.id.dataSourceInput)
         val grabDataTime = findViewById<EditText>(R.id.updateDataTime)

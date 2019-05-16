@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package edu.uw.ischool.elisat15.quizdrone
 
 import android.Manifest
@@ -12,9 +14,14 @@ import java.io.IOException
 import android.Manifest.permission
 import android.app.Activity
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.NetworkInfo
+import android.provider.Settings
+import android.support.v4.content.ContextCompat.startActivity
 import android.widget.Toast
 import java.io.FileNotFoundException
 import java.lang.Exception
@@ -46,10 +53,18 @@ interface TopicRepository {
     fun fetchData(context: Context): ArrayList<Topic>
 
     fun downloadJSON(context: Context) {
+
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
+
+
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(context)
-        val sharedPreference = context.getSharedPreferences("USER_PREFERENCES_KEY",
-            Context.MODE_PRIVATE)
+        val sharedPreference = context.getSharedPreferences(
+            "USER_PREFERENCES_KEY",
+            Context.MODE_PRIVATE
+        )
         val url = sharedPreference.getString("dataSource", "")
 
         // Request a string response from the provided URL.
@@ -66,22 +81,33 @@ interface TopicRepository {
                     fileOutputStream.write(response.toByteArray())
                     fileOutputStream.close()
                     Log.v("downloadData", "Successfully downloaded!")
-                } catch(e: FileNotFoundException) {
+                } catch (e: FileNotFoundException) {
                     Log.v("downloadData", e.message)
                 } catch (e: IOException) {
                     Log.v("downloadData", e.message)
                 }
 
             },
-            Response.ErrorListener { Log.v("requesting", "That didn't work!") })
+            Response.ErrorListener {
+                Toast.makeText(context, "Download Failed! Retrieving data from: " +
+                    url, Toast.LENGTH_LONG).show()
+            })
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest)
+
     }
 
     fun fetchJSON(dataSource: String, context: Context): String? {
 
-        downloadJSON(context)
+        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
+
+        if (isConnected) {
+            downloadJSON(context)
+        }
+
         val fileLocation = context.getFilesDir().toString() + "/" + "questions.json";
         var jsonString = File(fileLocation).readText()
 
