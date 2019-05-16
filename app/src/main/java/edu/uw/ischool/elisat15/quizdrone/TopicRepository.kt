@@ -54,11 +54,6 @@ interface TopicRepository {
 
     fun downloadJSON(context: Context) {
 
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
-
-
         // Instantiate the RequestQueue.
         val queue = Volley.newRequestQueue(context)
         val sharedPreference = context.getSharedPreferences(
@@ -72,6 +67,7 @@ interface TopicRepository {
 
             Request.Method.GET, url,
             Response.Listener<String> { response ->
+
                 val fileName = "questions.json"
                 val file = File(context.filesDir, fileName)
                 file.appendText(response)

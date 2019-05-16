@@ -1,6 +1,7 @@
 package edu.uw.ischool.elisat15.quizdrone
 
 import android.app.AlarmManager
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
@@ -12,8 +13,10 @@ import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.app.PendingIntent
+import android.content.DialogInterface
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
+import android.provider.Settings
 
 
 @Suppress("DEPRECATION")
@@ -44,15 +47,57 @@ class Preferences : AppCompatActivity() {
 
     }
 
+    fun checkConnectivity(grabDataTime: Int) {
+        val cm = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
+        val isConnected: Boolean = activeNetwork?.isConnectedOrConnecting == true
+
+        if (isConnected) {
+            // fetches data when application loads
+            val alarmIntent = Intent(this, MyAlarmManager::class.java)
+            val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
+            val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
+            alarmManager.cancel(pendingIntent)
+            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0,
+                grabDataTime.toLong(), pendingIntent)
+        } else {
+
+            if (Settings.System.getInt(this.getContentResolver(), Settings.System.AIRPLANE_MODE_ON, 0) != 0) {
+
+                val intent = Intent(Settings.ACTION_AIRPLANE_MODE_SETTINGS)
+                AlertDialog.Builder(this)
+                    .setTitle("Airplane Mode?")
+                    .setMessage("You are currently have no access to the Internet and are in airplane mode. " +
+                            "Would you like to turn airplane mode off?")
+                    .setPositiveButton(android.R.string.yes) { dialog: DialogInterface, which: Int ->
+                        startActivity(intent)
+                    }
+                    .setNegativeButton(android.R.string.no, null)
+                    .show()
+
+            } else {
+
+                AlertDialog.Builder(this)
+                    .setTitle("No Internet Connection")
+                    .setMessage("You currently have no access to the Internet! Unable to download data due to no connection! ")
+                    .setPositiveButton(android.R.string.yes, null)
+                    .setNegativeButton(android.R.string.no, null)
+                    .show()
+
+            }
+
+        }
+    }
+
+
     private fun setSavePreferenceButton() {
         val saveBtn = findViewById<Button>(R.id.saveSettingBtn)
         val sharedPreferences = getSharedPreferences(Companion.USER_PREF_KEY, Context.MODE_PRIVATE)
         val dataEditText = findViewById<EditText>(R.id.dataSourceInput)
         val dataTimeEditText = findViewById<EditText>(R.id.updateDataTime)
 
-        val alarmIntent = Intent(this, MyAlarmManager::class.java)
-        val pendingIntent = PendingIntent.getBroadcast(this, 0, alarmIntent, 0)
-        val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+
 
         saveBtn.setOnClickListener {
             val dataURL = dataEditText.text.toString()
@@ -62,9 +107,8 @@ class Preferences : AppCompatActivity() {
                 grabDataTime = "1"
             }
 
-            alarmManager.cancel(pendingIntent)
-            alarmManager.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, 0,
-                grabDataTime.toLong().times(1000), pendingIntent)
+
+            checkConnectivity(grabDataTime.toInt().times(60000))
 
             sharedPreferences.edit().putString(DATA_SOURCE_KEY, dataURL).apply()
             sharedPreferences.edit().putInt(FETCH_TIME_KEY, grabDataTime.toInt().times(60000)).apply()

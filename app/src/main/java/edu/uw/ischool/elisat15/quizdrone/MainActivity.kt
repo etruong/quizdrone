@@ -86,8 +86,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         setSupportActionBar(findViewById(R.id.my_toolbar))
 
-        quizApp.topicRepository.fetchData(this)
         checkConnectivity()
+        quizApp.topicRepository.fetchData(this)
         setButtonTopics()
 
         // Sets on click listeners for
